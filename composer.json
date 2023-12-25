@@ -1,0 +1,14 @@
+{
+    "name": "habeuk/view_filter_promotion",
+    "description": "Add a filter view plugin to sort the products that are impacted by a promotion",
+    "type": "drupal-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kouwa stephane",
+            "email": "kksasteph888@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}

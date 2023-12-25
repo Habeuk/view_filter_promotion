@@ -1,0 +1,8 @@
+name: View filter promotion
+type: module
+description: Add a filter view plugin to sort the products that are impacted by a promotion
+package: Custom
+core_version_requirement: ^9 || ^10
+dependencies:
+  - drupal:views
+  - commerce:commerce_promotion
