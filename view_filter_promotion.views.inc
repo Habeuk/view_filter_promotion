@@ -10,7 +10,7 @@ function view_filter_promotion_views_data_alter(array &$data) {
       'group' => t('promotion'),
       'filter' => [
         'field' => 'product_id',
-        'id' => 'wbhorizondebug_filter_product_by_promotion',
+        'id' => 'view_filter_promotion',
         'title' => t('Product has promotion'),
         'help' => t(' allows you to filter products that may have a valid promotion')
       ]
