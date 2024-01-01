@@ -58,27 +58,29 @@ class ViewFilterPromotion extends ViewFilterPromotionBase {
           $this->setItemsFromCache($productsPromotion);
         }
       }
-      
-      if ($productsPromotion) {
-        /**
-         *
-         * @var \Drupal\views\Plugin\views\query\Sql $query
-         */
-        $query = $this->query;
-        $definition = [
-          'table' => 'commerce_product__variations',
-          'field' => 'entity_id',
-          'left_table' => 'commerce_product_field_data',
-          'left_field' => 'product_id'
+      if (!$productsPromotion) {
+        $productsPromotion = [
+          'none'
         ];
-        /**
-         *
-         * @var \Drupal\views\Plugin\views\join\Standard $join
-         */
-        $join = \Drupal::service('plugin.manager.views.join')->createInstance('standard', $definition);
-        $query->addRelationship('cpv', $join, 'commerce_product');
-        $query->addWhere('AND', 'cpv.variations_target_id', $productsPromotion, 'IN');
       }
+      /**
+       *
+       * @var \Drupal\views\Plugin\views\query\Sql $query
+       */
+      $query = $this->query;
+      $definition = [
+        'table' => 'commerce_product__variations',
+        'field' => 'entity_id',
+        'left_table' => 'commerce_product_field_data',
+        'left_field' => 'product_id'
+      ];
+      /**
+       *
+       * @var \Drupal\views\Plugin\views\join\Standard $join
+       */
+      $join = \Drupal::service('plugin.manager.views.join')->createInstance('standard', $definition);
+      $query->addRelationship('cpv', $join, 'commerce_product');
+      $query->addWhere('AND', 'cpv.variations_target_id', $productsPromotion, 'IN');
     }
   }
   

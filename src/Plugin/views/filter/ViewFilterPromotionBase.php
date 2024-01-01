@@ -98,8 +98,14 @@ class ViewFilterPromotionBase extends BooleanOperator {
   protected function getCacheACPu() {
     if (!$this->cacheACPu)
       $this->cacheACPu = $this->ApcuBackendFactory->get($this->pluginId);
-    
     return $this->cacheACPu;
+  }
+  
+  /**
+   * --
+   */
+  public function deleteAllCache() {
+    $this->getCacheACPu()->deleteAll();
   }
   
   /**

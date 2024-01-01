@@ -69,12 +69,12 @@ class ViewFilterPromotionSearchApi extends ViewFilterPromotionBase {
       }
       
       if ($productsPromotion) {
-        /**
-         *
-         * @var \Drupal\views\Plugin\views\query\Sql $query
-         */
-        $query = $this->query;
-        $query->addWhere('AND', 'default_variation', $productsPromotion, 'IN');
+        $this->query->addWhere('AND', 'default_variation', $productsPromotion, 'IN');
+      }
+      else {
+        $this->query->addWhere('AND', 'default_variation', [
+          'none'
+        ], 'IN');
       }
     }
   }

@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * implement hook_ENTITY_TYPE_update
+ */
+function view_filter_promotion_commerce_promotion_update(\Drupal\commerce_promotion\Entity\Promotion $entity) {
+/**
+ *
+ * @var Ambiguous $FilterPromotion
+ */
+  // $FilterPromotion = \Drupal::service('');
+}
