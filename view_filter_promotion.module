@@ -4,9 +4,20 @@
  * implement hook_ENTITY_TYPE_update
  */
 function view_filter_promotion_commerce_promotion_update(\Drupal\commerce_promotion\Entity\Promotion $entity) {
-/**
- *
- * @var Ambiguous $FilterPromotion
- */
-  // $FilterPromotion = \Drupal::service('');
+  /**
+   *
+   * @var \Drupal\views\Plugin\ViewsHandlerManager $ViewsHandlerManager
+   */
+  $ViewsHandlerManager = \Drupal::service('plugin.manager.views.filter');
+  $options = [];
+  $definitions = $ViewsHandlerManager->getDefinitions();
+  $options = [];
+  foreach ($definitions as $plugin) {
+    if (str_contains($plugin['id'], 'view_filter_promotion')) {
+      $instance = $ViewsHandlerManager->createInstance($plugin['id']);
+      if ($instance instanceof \Drupal\view_filter_promotion\Plugin\views\filter\ViewFilterPromotion)
+        $instance->deleteAllCache();
+    }
+  }
 }
+

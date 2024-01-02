@@ -11,13 +11,10 @@ use Drupal\commerce_order\PriceCalculator;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\commerce\Context;
 use Drupal\Core\Cache\ApcuBackendFactory;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Permet de filtrer les entites achetable (commerce_variation)
- *
- * @ingroup views_filter_handlers
- *
- * @ViewsFilter("view_filter_promotion_search_api")
+ * Fichier de base permetttant de construire les filtres de promotion.
  */
 class ViewFilterPromotionBase extends BooleanOperator {
   /**
@@ -126,7 +123,7 @@ class ViewFilterPromotionBase extends BooleanOperator {
    * @param array $productsPromotion
    */
   protected function setItemsFromCache(array $productsPromotion) {
-    // cache de 15 minutes par defaut.
+    // Cache de 15 minutes par defaut.
     $this->getCacheACPu()->set($this->getKeyCid(), $productsPromotion, REQUEST_TIME + 900);
   }
   
@@ -136,6 +133,17 @@ class ViewFilterPromotionBase extends BooleanOperator {
    */
   protected function getKeyCid() {
     return $this->view->id();
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   * @see \Drupal\views\Plugin\views\filter\FilterPluginBase::valueSubmit()
+   */
+  protected function valueSubmit($form, FormStateInterface $form_state) {
+    parent::valueSubmit($form, $form_state);
+    // after save value delete cache.
+    $this->getCacheACPu()->delete($this->getKeyCid());
   }
   
 }
