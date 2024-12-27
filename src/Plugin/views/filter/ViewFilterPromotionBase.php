@@ -11,6 +11,7 @@ use Drupal\commerce_order\PriceCalculator;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\commerce\Context;
 use Drupal\Core\Cache\ApcuBackendFactory;
+use Drupal\Core\Cache\DatabaseBackendFactory;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -42,6 +43,12 @@ class ViewFilterPromotionBase extends BooleanOperator {
    * @var \Drupal\Core\Cache\ApcuBackendFactory
    */
   protected $ApcuBackendFactory;
+  
+  /**
+   *
+   * @var \Drupal\Core\Cache\DatabaseBackendFactory
+   */
+  protected $DatabaseBackendFactory;
   /**
    *
    * @var \Drupal\commerce\Context
@@ -52,18 +59,20 @@ class ViewFilterPromotionBase extends BooleanOperator {
    *
    * @var \Drupal\Core\Cache\ApcuBackend
    */
-  protected $cacheACPu;
+  protected $cacheDatas;
   
-  function __construct($configuration, $plugin_id, $plugin_definition, PriceCalculator $priceCalculator, AccountInterface $currentUser, CurrentStoreInterface $currentStore, ApcuBackendFactory $ApcuBackendFactory) {
+  function __construct($configuration, $plugin_id, $plugin_definition, PriceCalculator $priceCalculator, AccountInterface $currentUser, CurrentStoreInterface $currentStore, ApcuBackendFactory $ApcuBackendFactory, DatabaseBackendFactory $DatabaseBackendFactory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->priceCalculator = $priceCalculator;
     $this->currentUser = $currentUser;
     $this->currentStore = $currentStore;
     $this->ApcuBackendFactory = $ApcuBackendFactory;
+    $this->DatabaseBackendFactory = $DatabaseBackendFactory;
   }
   
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('commerce_order.price_calculator'), $container->get('current_user'), $container->get('commerce_store.current_store'), $container->get('cache.backend.apcu'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('commerce_order.price_calculator'), $container->get('current_user'), $container->get(
+      'commerce_store.current_store'), $container->get('cache.backend.apcu'), $container->get('cache.backend.database'));
   }
   
   /**
@@ -93,9 +102,15 @@ class ViewFilterPromotionBase extends BooleanOperator {
    * @return \Drupal\Core\Cache\ApcuBackend
    */
   protected function getCacheACPu() {
-    if (!$this->cacheACPu)
-      $this->cacheACPu = $this->ApcuBackendFactory->get($this->pluginId);
-    return $this->cacheACPu;
+    if (!$this->cacheDatas) {
+      if (function_exists('apcu_cache_info')) {
+        $this->cacheDatas = $this->ApcuBackendFactory->get($this->pluginId);
+      }
+      else {
+        $this->cacheDatas = $this->DatabaseBackendFactory->get($this->pluginId);
+      }
+    }
+    return $this->cacheDatas;
   }
   
   /**
@@ -145,5 +160,4 @@ class ViewFilterPromotionBase extends BooleanOperator {
     // after save value delete cache.
     $this->getCacheACPu()->delete($this->getKeyCid());
   }
-  
 }
